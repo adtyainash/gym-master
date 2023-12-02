@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model gymClass {
+  id             Int         @id @default(autoincrement())
+  description    String
+  className      String
+  instructorName String
+  price          Int
+  status         String      
+  quota          Int
+  equipments     equipment[]
+  instructorId   Int
+  instructor     instructor  @relation(fields: [instructorId], references: [id])
+  image          String
+}
+
+model equipment {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  weight     Int?
+  gymClassId Int? // Foreign key to gymClass
+  gymClass   gymClass? @relation(fields: [gymClassId], references: [id])
+}
+
+model instructor {
+  id             Int        @id @default(autoincrement())
+  name           String
+  email          String
+  telephone      String
+  specialization String
+  gymClasses     gymClass[]
+}
+
+model user {
+  id                 Int        @id @default(autoincrement())
+  username           String     @unique
+  email              String     @unique
+  password           String
+  name               String
+  telephone          String
+  membershipStatus   Boolean    @default(false)
+  membershipDuration Int        @default(0)
+  role               String     @default("Customer")
+  purchase           purchase[]
+  address            String
+}
+
+model membership {
+  membershipId Int        @id @default(autoincrement())
+  name         String
+  price        Int
+  description  String
+  duration     Int
+  purchase     purchase[]
+}
+
+model purchase {
+  purchaseId   Int        @id @default(autoincrement())
+  userId       Int
+  membershipId Int
+  user         user       @relation(fields: [userId], references: [id])
+  membership   membership @relation(fields: [membershipId], references: [membershipId])
+  createdAt    DateTime   @default(now())
+}

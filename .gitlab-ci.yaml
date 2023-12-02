@@ -1,0 +1,18 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    - apt-get update -qy
+    - apt-get install -y curl
+    - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+    - export NVM_DIR="$HOME/.nvm"
+    - source "$NVM_DIR/nvm.sh"
+    - nvm install 20 
+    - npm install -g vercel  
+    - npm install 
+    - npm run dev  
+    - vercel --token RHFJDRbJLn27zwjNlI9b4YRy --prod
+  only:
+    - develop  
